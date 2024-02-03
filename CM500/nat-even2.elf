@@ -1,0 +1,48 @@
+% Two definitions of "even", and a proof that they're the same.
+
+% Definitions ---------------------------------------------------------------------------------------------------------
+
+nat : type. % A nullary judgment, i.e., a type indexed by nothing.
+z : nat.
+s : nat -> nat.
+
+%name nat N.
+
+even : nat -> type.                % A judgement on nat, i.e., an indexed type.
+even/z : even z.                   % A rule that z is even.
+even/s : even N -> even (s (s N)). % A rule that for all N, if N is even then the successor of the successor is even.
+                                   % cf. alternate form of `head <- subgoal`: `even/s : even (s, (s, N)) <- even N`.
+
+odd : nat -> type.   % More judgement forms, defined before their use in mutual definitions.
+even2 : nat -> type. % More judgement forms, defined before their use in mutual definitions.
+
+odd/s : even2 N -> odd (s N).
+
+even2/z : even2 z.
+even2/s : odd N -> even2(s N).
+
+% Proofs --------------------------------------------------------------------------------------------------------------
+
+% Direction 1: even implies even2
+even-implies-even2 : even N -> even2 N -> type. % A theorem.
+%mode even-implies-even2 +X1 -X2. % I/O mode: e.g., first is input even, second is output even2.
+
+even-implies-even2/z : even-implies-even2 even/z (even2/z). % Instance of even-implies-even2 that proves even/z by providing even2/z.
+even-implies-even2/s : even-implies-even2 (Even : even N) (Even2 : even2 N) -> % Instance that proves the s case.
+  even-implies-even2 % exhuastive pattern match on the input mode
+    (even/s Even)            % case even/s takes Even as evidence
+    (even2/s (odd/s Even2)). % case even2/s takes (odd/s Even2) as evidence
+
+% Direction 2: even2 implies even
+even2-implies-even : even2 N -> even N -> type. % A theorem.
+%mode even2-implies-even +X1 -X2. % First is input even, second is output even2.
+
+even2-implies-even/z : even2-implies-even (even2/z) even/z . % Instance of even2-implies-even that proves the z case.
+even2-implies-even/s : even2-implies-even (Even2 : even2 N) Even -> % Instance that proves the s case.
+  even2-implies-even (even2/s (odd/s Even2))(even/s (Even : even N)). 
+
+
+% Config --------------------------------------------------------------------------------------------------------------
+
+%worlds () (even-implies-even2 _ _). % To be explained later
+%total D (even-implies-even2 D _). % Totality checker needs to know which hypothesis is supposed to get smaller.

@@ -1,0 +1,91 @@
+% A proof that every nat is even or odd.
+
+% Definitions ---------------------------------------------------------------------------------------------------------
+
+nat : type. % A nullary judgment, i.e., a type indexed by nothing.
+z : nat.
+s : nat -> nat.
+
+%name nat N.
+
+even : nat -> type.                % A judgement on nat, i.e., an indexed type.
+even/z : even z.                   % A rule that z is even.
+even/s : even N -> even (s (s N)). % A rule that for all N, if N is even then the successor of the successor is even.
+                                   % cf. alternate form of `head <- subgoal`: `even/s : even (s, (s, N)) <- even N`.
+
+%  odd : nat -> type.                 % Another judgement on nat
+%  odd/s : even N -> odd (s N).       % A rule that for all N, if N is even then the successor is odd.
+
+
+
+
+
+
+
+
+odd : nat -> type.   % More judgement forms, defined before their use in mutual definitions.
+even2 : nat -> type. % More judgement forms, defined before their use in mutual definitions.
+
+odd/s : even2 N -> odd (s N).
+
+even2/z : even2 z.
+even2/s : odd N -> even2(s N).
+
+% Proofs --------------------------------------------------------------------------------------------------------------
+
+% Theorem: every nat is even or odd.
+even-or-odd : nat -> type.
+eo/e : even2 N -> even-or-odd N.
+eo/o : odd N -> even-or-odd N.
+
+% 1) Prove the following lemma:
+eo-succ : even-or-odd N -> even-or-odd (s N) -> type.
+
+% a) set mode.
+%mode eo-succ +X1 -X2.
+
+% b) run to get help from twelf (note X2 is output, what do we need as input?):
+%  Coverage error --- missing cases:
+%  {N1:nat} {X1:even (s N1)} {X2:even-or-odd (s (s N1))}
+%     |- eo-succ (eo/e X1) X2,
+%  {N1:nat} {X1:even N1} {X2:even-or-odd (s (s N1))}
+%     |- eo-succ (eo/o (odd/s X1)) X2.
+
+% c) start with the e case by setting up cases (pattern matching):
+%  eo-succ/e : eo-succ
+%    (eo/e XXX)
+%    (eo/o YYY).
+
+% then, fill in the rest of the owl
+eo-succ/e : eo-succ
+  (eo/e Even)
+  (eo/o (odd/s Even)).
+
+% d) end with the o case
+eo-succ/o : eo-succ
+  (eo/o Odd)
+  (eo/e (even2/s Odd)).
+
+% 2) Prove the main theorem.
+every-nat-eo : {N:nat} even-or-odd N -> type.
+%mode every-nat-eo +X1 -X2.
+
+every-nat-eo/z : every-nat-eo
+  z % passing z as N
+  (eo/e even2/z).
+
+every-nat-eo/s : every-nat-eo
+  (s N)
+  C
+  <- every-nat-eo N B % how do I use these as preconditions?
+  <- eo-succ B C.     % note that order of these "in case of" statements matters.
+
+
+
+
+% Config --------------------------------------------------------------------------------------------------------------
+
+%worlds () (eo-succ _ _). % To be explained later
+%total D (eo-succ D _). % Totality checker needs to know which hypothesis is supposed to get smaller.
+%worlds () (every-nat-eo _ _).
+%total D (every-nat-eo D _).
