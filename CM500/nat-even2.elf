@@ -23,6 +23,8 @@ even2/s : odd N -> even2(s N).
 
 % Proofs --------------------------------------------------------------------------------------------------------------
 
+% compare with Scala example: https://gist.github.com/julianpeeters/ab2946b6491d099cbdc436b3cd826dc9
+
 % Direction 1: even implies even2
 even-implies-even2 : even N -> even2 N -> type. % A theorem.
 %mode even-implies-even2 +X1 -X2. % I/O mode: e.g., first is input even, second is output even2.
