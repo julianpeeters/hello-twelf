@@ -16,13 +16,6 @@ even/s : even N -> even (s (s N)). % A rule that for all N, if N is even then th
 %  odd : nat -> type.                 % Another judgement on nat
 %  odd/s : even N -> odd (s N).       % A rule that for all N, if N is even then the successor is odd.
 
-
-
-
-
-
-
-
 odd : nat -> type.   % More judgement forms, defined before their use in mutual definitions.
 even2 : nat -> type. % More judgement forms, defined before their use in mutual definitions.
 
@@ -32,6 +25,8 @@ even2/z : even2 z.
 even2/s : odd N -> even2(s N).
 
 % Proofs --------------------------------------------------------------------------------------------------------------
+
+% compare with Scala example: https://gist.github.com/julianpeeters/12a8848a0f8b6ac9d6964756e3b59e9f
 
 % Theorem: every nat is even or odd.
 even-or-odd : nat -> type.

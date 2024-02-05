@@ -35,6 +35,12 @@ even-implies-even2/s : even-implies-even2 (Even : even N) (Even2 : even2 N) -> %
     (even/s Even)            % case even/s takes Even as evidence
     (even2/s (odd/s Even2)). % case even2/s takes (odd/s Even2) as evidence
 
+% alternately,
+%  even-implies-even2 : ∀ {n : Nat} → even n → even2 n
+%  even-implies-even2 even/z = even2/z
+%  even-implies-even2 (even/s n) = even2/s (odd/s (even-implies-even2 n))
+
+
 % Direction 2: even2 implies even
 even2-implies-even : even2 N -> even N -> type. % A theorem.
 %mode even2-implies-even +X1 -X2. % First is input even, second is output even2.
