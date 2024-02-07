@@ -51,6 +51,10 @@ sol1 = balanced/node (height/node max/z1 height/leaf height/leaf)
 sol2 = balanced/node (height/node max/z2 height/leaf height/leaf)
         (height/node max/z2 height/leaf height/leaf).
 
+% conclusion: our representation is inadequate because, although there is correctly only one instance of evidence,
+% `balanced (node (node leaf leaf) (node leaf leaf))`, there are serveral ways such evidence can be constructed.
+% why is is an issue?
+
 % however, we don't want this to have a solution (but does):
 %solve - : balanced (node (node (node leaf leaf) leaf) (node leaf (node leaf leaf))).
 %         O
@@ -65,7 +69,7 @@ sol2 = balanced/node (height/node max/z2 height/leaf height/leaf)
 
 %%% Intrinsically typed balanced binary trees %%
 
-% Compare with a Scala solution: 
+% Compare with a Scala solution: https://gist.github.com/julianpeeters/7a859da6e2634dbee6ea9134d8d23464
 
 bbt : nat -> type.
 bLeaf : bbt z.
