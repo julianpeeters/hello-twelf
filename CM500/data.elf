@@ -102,15 +102,7 @@ eqTree/node : eqTree (bNode L1 R1) (bNode L2 R2)
 % "at most 1 different" in height. Demonstrate that the extrinsic
 % encoding is not adequate and the intrinsic one is.
 
-
-
-difference : nat -> nat -> nat -> type.
-%mode difference +N1 +N2 -N3.
-difference/z1 : difference z N N.
-difference/z2 : difference N z N.
-difference/s : difference (s M) (s N) (s P) <- difference M N P.
-%worlds () (difference _ _ _).
-%total [N1 N2] (difference N1 N2 _).
+% Compare with a Scala solution: https://gist.github.com/julianpeeters/48540ea565e7a130db8f635039c40e6b
 
 avlTree : tree -> type.
 avlTree/leaf : avlTree leaf.
