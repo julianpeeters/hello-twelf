@@ -7,19 +7,22 @@
 tp : type.
 unit : tp.
 arrow : tp -> tp -> tp.
+product: tp -> tp -> tp.
 
 tm : type.
-empty : tm.
+emp : tm.
 app : tm -> tm -> tm.
 lam : tp -> (tm -> tm) -> tm.
+pair : tm -> tm -> tm.
+split : tm -> (tm -> tm -> tm) -> tm. % split is going to introduce variables into the context, so do we need a `%block` statement?
 
 % Examples
-ex0 = [x] app x empty.
-%abbrev ex1 = [x] app x empty.
-ex2 = lam (arrow unit unit) ([x] app x empty).
+ex0 = [x] app x emp.
+%abbrev ex1 = [x] app x emp.
+ex2 = lam (arrow unit unit) ([x] app x emp).
 ex3 = lam (arrow unit unit) ex0.
 %abbrev ex3 = lam (arrow unit unit) ex1.
-%abbrev ex4 = lam unit ([x] empty).
+%abbrev ex4 = lam unit ([x] emp).
 ex5 = app ex3 ex4.
 
 %worlds () (tp).
@@ -32,12 +35,28 @@ ex5 = app ex3 ex4.
 % Typing judgments
 of : tm -> tp -> type.
 %mode of +M -T.
-of-empty : of empty unit.
+of-emp : of emp unit.
 of-app : of (app F M) T2
           <- of F (arrow T1 T2)
           <- of M T1.
 of-lam : of (lam T1 ([x] M x)) (arrow T1 T2)
           <- ({x:tm} of x T1 -> of (M x) T2).
+of-pair : of (pair F S) (product T1 T2)
+          <- of F T1
+          <- of S T2.
+
+
+of-split : of (split E ([x] [y] E' x y)) T
+          <- of E (product T1 T2)
+          <- {x:tm} {y:tm} of (E' x y) T.
+
+%   e : T1 x T2     x:T1, y:T2 |- e' : T
+%   ------------------------------------- of-split
+%       e' : T
+%
+
+
+
 
 %block bind : some {t:tp} block {x:tm} {d:of x t}.
 %worlds (bind) (of _ _).
@@ -50,6 +69,7 @@ step-app-1 : step (app E1 E2) (app E1' E2)
 step-app-2 : step (app E1 E2) (app E1 E2')
 %              <- value E1
               <- step E2 E2'.
+%  step-pair-1 : step (app )              
 step-app-beta
   : step (app (lam T2 ([x] E x)) E2) (E E2).
     % <- value E2.
@@ -104,7 +124,11 @@ sr-lam
 
 %%%% Exercises
 % Exercise 1:
-% - Add LF encodings for product types, pairs, and a "split" elim rule,
+% - Add LF encodings for
+%   [x] product types
+%   [x] pairs
+%   [ ] a "split" elim rule
+%
 %   as follows. Add all relevant judgment and proof cases.
 %
 %   T ::= ... | T x T
@@ -127,6 +151,14 @@ sr-lam
 % Exercise 2:
 % - Create an intrinsic encoding of the STLC.
 %   Declare blocks and worlds for every type family.
+
+
+term : tp -> type.
+empty : term unit.
+application : tp -> term -> tp -> term -> term. % wrong: term 1 needs to be a arrow type
+%  lambda : tp -> (tm -> tm) -> tm.
+tuple : tp -> term -> tp -> term -> term.
+untuple : tp -> term -> (tp -> term -> tp -> term -> term) -> term. % split is going to introduce variables into the context, so do we need a `%block` statement?
 
 
 % Exercise 3:
